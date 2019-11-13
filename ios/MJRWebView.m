@@ -1,12 +1,17 @@
 //
-//  MJRWebView.h
-//  Pods
+//  MJRWebView.m
+//  DoubleConversion
 //
 //  Created by Kaushik Annangi on 13/11/19.
 //
 
-#import <WebKit/WebKit.h>
+#import "MJRWebView.h"
 
-@interface MJRWebView : WKWebView
-
+@implementation MJRWebView
+- (BOOL)canPerformAction:(SEL)action withSender:(id)sender
+{
+    // Disable every option here, let RCTWebViewBridge handle everything
+    return NO;
+}
 @end
+
