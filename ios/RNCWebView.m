@@ -6,6 +6,7 @@
  */
 
 #import "RNCWebView.h"
+#import "MJRWebView.h"
 #import <React/RCTConvert.h>
 #import <React/RCTAutoInsetsProtocol.h>
 #import "RNCWKProcessPoolManager.h"
@@ -49,11 +50,14 @@ static NSDictionary* customCertificatesForHost;
 @property (nonatomic, copy) RCTDirectEventBlock onMessage;
 @property (nonatomic, copy) RCTDirectEventBlock onScroll;
 @property (nonatomic, copy) RCTDirectEventBlock onContentProcessDidTerminate;
+@property (nonatomic, copy) RCTBubblingEventBlock onSelection;
+@property (nonatomic, copy) RCTBubblingEventBlock onDoubleTap;
 @property (nonatomic, copy) WKWebView *webView;
 @end
 
 @implementation RNCWebView
 {
+  MJRWebView *_webView;
   UIColor * _savedBackgroundColor;
   BOOL _savedHideKeyboardAccessoryView;
   BOOL _savedKeyboardDisplayRequiresUserAction;
@@ -73,6 +77,7 @@ static NSDictionary* customCertificatesForHost;
 {
   if ((self = [super initWithFrame:frame])) {
     super.backgroundColor = [UIColor clearColor];
+    _webView = [[MJRWebView alloc] initWithFrame:self.bounds];
     _bounces = YES;
     _scrollEnabled = YES;
     _showsHorizontalScrollIndicator = YES;
@@ -114,12 +119,54 @@ static NSDictionary* customCertificatesForHost;
                                                  object:nil];
   }
 
+    UITapGestureRecognizer *singleFingerDTap = [[UITapGestureRecognizer alloc]
+                                                initWithTarget:self action:@selector(handleDoubleTap:)];
+    singleFingerDTap.numberOfTapsRequired = 2;
+    singleFingerDTap.delegate = self;
+    [_webView addGestureRecognizer:singleFingerDTap];
+
+    _webView.UIDelegate = self;
+    [self addSubview:_webView];
+
   return self;
 }
 
 - (void)dealloc
 {
   [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+RCT_NOT_IMPLEMENTED(- (instancetype)initWithCoder:(NSCoder *)aDecoder)
+
+- (void)handleDoubleTap:(UITapGestureRecognizer *)doubleTapGesture {
+    CGPoint touchPoint = [doubleTapGesture locationInView: self];
+    NSDictionary *event = @{ @"location": @{
+                                     @"x": @(touchPoint.x),
+                                     @"y": @(touchPoint.y)
+                                     }
+                             };
+
+    if (self.onDoubleTap) {
+        self.onDoubleTap(event);
+    }
+}
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer
+shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+    BOOL isTapGesture = [otherGestureRecognizer isKindOfClass:[UITapGestureRecognizer class]];
+    if (isTapGesture) {
+        UITapGestureRecognizer *doubleTapGesture = (UITapGestureRecognizer *)otherGestureRecognizer;
+
+        if ([doubleTapGesture numberOfTapsRequired] == 2) {
+            [otherGestureRecognizer requireGestureRecognizerToFail:gestureRecognizer];
+        }
+    }
+    return YES;
+}
+
+- (BOOL)canPerformAction:(SEL)action withSender:(id)sender {
+    return NO;
 }
 
 /**
@@ -892,7 +939,7 @@ static NSDictionary* customCertificatesForHost;
         _onHttpError(event);
       }
     }
-  }  
+  }
 
   decisionHandler(WKNavigationResponsePolicyAllow);
 }

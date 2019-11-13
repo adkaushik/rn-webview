@@ -68,6 +68,8 @@ RCT_EXPORT_VIEW_PROPERTY(applicationNameForUserAgent, NSString)
 RCT_EXPORT_VIEW_PROPERTY(cacheEnabled, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(allowsLinkPreview, BOOL)
 RCT_EXPORT_VIEW_PROPERTY(allowingReadAccessToURL, NSString)
+RCT_EXPORT_VIEW_PROPERTY(onSelection, RCTBubblingEventBlock)
+RCT_EXPORT_VIEW_PROPERTY(onDoubleTap, RCTBubblingEventBlock)
 
 #if defined(__IPHONE_OS_VERSION_MAX_ALLOWED) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000 /* __IPHONE_11_0 */
 RCT_EXPORT_VIEW_PROPERTY(contentInsetAdjustmentBehavior, UIScrollViewContentInsetAdjustmentBehavior)
