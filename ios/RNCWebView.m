@@ -6,7 +6,7 @@
  */
 
 #import "RNCWebView.h"
-#import "MJRWebView.h"
+// #import "MJRWebView.h"
 #import <React/RCTConvert.h>
 #import <React/RCTAutoInsetsProtocol.h>
 #import "RNCWKProcessPoolManager.h"
@@ -57,7 +57,7 @@ static NSDictionary* customCertificatesForHost;
 
 @implementation RNCWebView
 {
-  MJRWebView *_webView;
+  // MJRWebView *_webView;
   UIColor * _savedBackgroundColor;
   BOOL _savedHideKeyboardAccessoryView;
   BOOL _savedKeyboardDisplayRequiresUserAction;
@@ -77,7 +77,7 @@ static NSDictionary* customCertificatesForHost;
 {
   if ((self = [super initWithFrame:frame])) {
     super.backgroundColor = [UIColor clearColor];
-    _webView = [[MJRWebView alloc] initWithFrame:self.bounds];
+    // _webView = [[MJRWebView alloc] initWithFrame:self.bounds];
     _bounces = YES;
     _scrollEnabled = YES;
     _showsHorizontalScrollIndicator = YES;
@@ -166,6 +166,7 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
 }
 
 - (BOOL)canPerformAction:(SEL)action withSender:(id)sender {
+    NSLog(@"Can perform selection ? No");
     return NO;
 }
 
