@@ -138,6 +138,13 @@ static NSDictionary* customCertificatesForHost;
 
 RCT_NOT_IMPLEMENTED(- (instancetype)initWithCoder:(NSCoder *)aDecoder)
 
+- (BOOL)canPerformAction:(SEL)action withSender:(id)sender {
+    [[NSOperationQueue mainQueue] addOperationWithBlock:^{
+        [[UIMenuController sharedMenuController] setMenuVisible:NO animated:NO];
+    }];
+    return [super canPerformAction:action withSender:sender];
+}
+
 - (void)handleDoubleTap:(UITapGestureRecognizer *)doubleTapGesture {
     CGPoint touchPoint = [doubleTapGesture locationInView: self];
     NSDictionary *event = @{ @"location": @{
@@ -165,10 +172,10 @@ shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherG
     return YES;
 }
 
-- (BOOL)canPerformAction:(SEL)action withSender:(id)sender {
-    NSLog(@"Can perform selection ? No");
-    return NO;
-}
+// - (BOOL)canPerformAction:(SEL)action withSender:(id)sender {
+//     NSLog(@"Can perform selection ? No");
+//     return NO;
+// }
 
 /**
  * See https://stackoverflow.com/questions/25713069/why-is-wkwebview-not-opening-links-with-target-blank/25853806#25853806 for details.
